@@ -2,7 +2,7 @@ import heapq
 from dataclasses import dataclass
 from typing import List, Tuple
 
-from event import Event    # Base Event
+from events import Event    # Base Event
 from scheduler import schedule    #Part-B
 from reporter import log_admission_complete
 from departure import Departure
@@ -18,7 +18,7 @@ nurse_busy: bool = False    # Single admission nurse shared by all P1 patients
 _adm_heap: list[tuple[int, int, "Patient"]] = []    ## Heap items are tuples: (treat_finish_time, patient_id, patient_obj)
 
 # HELPERS - FOR TESTS
-def reset_admission_state() -> None:
+def reset_admission_state():
     """Helper for tests; safe to call anytime."""
     global nurse_busy, _adm_heap
     nurse_busy = False
@@ -29,7 +29,7 @@ def admission_enqueue(patient, treat_finish_time: int) -> None:
     """Queue a priority-1 patient for admission while they remain in the room."""
     heapq.heappush(_adm_heap, (treat_finish_time, patient.id, patient))
     
-def try_start_admission(t_now: int) -> None:
+def try_start_admission(now):
     """
     If the nurse is idle and a P1 is waiting, start an admission.
     Admission takes 3 time units and prints at completion.
