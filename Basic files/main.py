@@ -1,4 +1,4 @@
-from read_file import read_next_arrival
+from Read_file import read_next_arrival
 from queue import PriorityQueue
 
 #made global variables to keep tracking of important variables
