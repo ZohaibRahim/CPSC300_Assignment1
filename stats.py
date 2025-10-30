@@ -1,6 +1,4 @@
 # Tiny accumulator for end-of-run summary.
-# You can call these from A/B/C/D as you cross boundaries.
-
 def add_wait(patient, bucket: str, delta: int) -> None:
     """
     bucket in {"assess", "to_treat", "admit"}.
