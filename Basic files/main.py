@@ -17,7 +17,7 @@ with open('data1.txt', 'r') as file:
 
     first_event = read_next_arrival(file, patient_id_counter)
     if first_event:
-        event_list.append(first_event)
+        add_event_in_order(first_event)
         patient_id_counter += 1
     
     while event_list:
