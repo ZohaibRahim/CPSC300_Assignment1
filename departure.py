@@ -1,16 +1,17 @@
-from event import Event
-from rooms import release, available_count    # Part-B
+from events import Event
+from rooms import release, available_count
 from reporter import log_departure
-from controller import try_start_treatment    # Part-C
+
+# Backfill callback, to be set by whoever constructs TreatmentController
+_BACKFILL_CB = None
+def register_backfill_callback(fn):
+    global _BACKFILL_CB
+    _BACKFILL_CB = fn
 
 class Departure(Event):
-    """
-    For P2–P5: scheduled at treatment_complete + 1.
-    For P1: scheduled at admission_complete time.
-    Only here the room becomes free.
-    """
-    def process(self) -> None:
+    def process(self):
         p, now = self.patient, self.time
-        release()                                       # room frees ONLY now
-        log_departure(p, now, available_count())        # include rooms available in log
-        try_start_treatment(now)                        # backfill at the same time tick
+        release()  # room becomes free ONLY now
+        log_departure(p, now, available_count())
+        if _BACKFILL_CB is not None:
+            _BACKFILL_CB(now)
