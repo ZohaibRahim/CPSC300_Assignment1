@@ -1,4 +1,4 @@
-from scheduler import schedule
+from scheduler import schedule    # Part B
 from departure import Departure
 from admission import admission_enqueue, try_start_admission
 
