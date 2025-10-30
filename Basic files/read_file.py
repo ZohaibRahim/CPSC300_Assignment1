@@ -1,7 +1,6 @@
 
 #Eventlist to keep track of all the incoming files
 
-from main import event_list
 
 #reading files 
 def read_next_arrival(file, patient_id):
@@ -18,4 +17,3 @@ def read_next_arrival(file, patient_id):
     event = (arrival_time, 'arrival', patient_id, assessment_time, patient_type)
     return event
 
-print(event_list)
