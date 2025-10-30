@@ -1,5 +1,48 @@
-def admission_enqueue(patient, t_finish)
+import heapq
+from event import Event
+from scheduler import schedule
+from reporter import log_admission_complete
+from departure import Departure
 
-def try_start_admission(t_now) # if nurse idle and queue non-empty
+# Single admission nurse shared by all P1 patients
+nurse_busy: bool = False
 
-def handle_admission_complete(event) # print + schedule Departure at same time
+# FCFS by treatment-finish time; tie-break by patient id
+# Heap items are tuples: (treat_finish_time, patient_id, patient_obj)
+_adm_heap: list[tuple[int, int, "Patient"]] = []
+
+def reset_admission_state() -> None:
+    """Helper for tests; safe to call anytime."""
+    global nurse_busy, _adm_heap
+    nurse_busy = False
+    _adm_heap.clear()
+
+def admission_enqueue(patient, treat_finish_time: int) -> None:
+    """Queue a priority-1 patient for admission while they remain in the room."""
+    heapq.heappush(_adm_heap, (treat_finish_time, patient.id, patient))
+    # Optional: start/mark admission-wait accounting in your reporter or patient.waits
+
+def try_start_admission(t_now: int) -> None:
+    """
+    If the nurse is idle and a P1 is waiting, start an admission.
+    Admission takes 3 time units and prints at completion.
+    """
+    global nurse_busy
+    if nurse_busy or not _adm_heap:
+        return
+    nurse_busy = True
+    _, _, p = heapq.heappop(_adm_heap)
+    schedule(AdmissionComplete(t_now + 3, p))
+
+class AdmissionComplete(Event):
+    """
+    Occurs exactly 3 time units after an admission starts.
+    Print admission at completion, then schedule same-time Departure.
+    """
+    def process(self) -> None:
+        global nurse_busy
+        p, now = self.patient, self.time
+        log_admission_complete(p, now)                  # print at completion
+        schedule(Departure(now, p))                     # depart same tick
+        nurse_busy = False
+        try_start_admission(now)                        # immediately serve next P1, if any
