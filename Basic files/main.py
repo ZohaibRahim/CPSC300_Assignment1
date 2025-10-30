@@ -1,6 +1,6 @@
 from Read_file import read_next_arrival
 from queue import PriorityQueue
-
+from Patient import Patient
 #made global variables to keep tracking of important variables
 event_list = []
 waiting_room = PriorityQueue()
