@@ -10,10 +10,10 @@ with open('data1.txt', 'r') as file:
     if not line:
         None
     #parsing the data into parts
-    parts = line.strip.split()
-    arrival_time = int(parts[1])
-    patient_type = parts[2]
-    assessment_time = parts[3]
+    parts = line.strip().split()
+    arrival_time = int(parts[0])
+    patient_type = parts[1]
+    assessment_time = int(parts[2])
 
     #generating a patient ID starting with 28064212
 
