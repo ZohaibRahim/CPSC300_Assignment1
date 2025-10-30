@@ -1,27 +1,34 @@
 import heapq
-from event import Event
-from scheduler import schedule
+from dataclasses import dataclass
+from typing import List, Tuple
+
+from event import Event    # Base Event
+from scheduler import schedule    #Part-B
 from reporter import log_admission_complete
 from departure import Departure
 
-# Single admission nurse shared by all P1 patients
-nurse_busy: bool = False
+# INTERNAL STATE
+class _AdmItem:
+    # FCFS by treatment-finish time, tie-break by patient id
+    treat_finish_time: int
+    patient_id: int
+    patient: "Patient"  # forward type
 
-# FCFS by treatment-finish time; tie-break by patient id
-# Heap items are tuples: (treat_finish_time, patient_id, patient_obj)
-_adm_heap: list[tuple[int, int, "Patient"]] = []
+nurse_busy: bool = False    # Single admission nurse shared by all P1 patients
+_adm_heap: list[tuple[int, int, "Patient"]] = []    ## Heap items are tuples: (treat_finish_time, patient_id, patient_obj)
 
+# HELPERS - FOR TESTS
 def reset_admission_state() -> None:
     """Helper for tests; safe to call anytime."""
     global nurse_busy, _adm_heap
     nurse_busy = False
     _adm_heap.clear()
-
+    
+# PUBLIC API
 def admission_enqueue(patient, treat_finish_time: int) -> None:
     """Queue a priority-1 patient for admission while they remain in the room."""
     heapq.heappush(_adm_heap, (treat_finish_time, patient.id, patient))
-    # Optional: start/mark admission-wait accounting in your reporter or patient.waits
-
+    
 def try_start_admission(t_now: int) -> None:
     """
     If the nurse is idle and a P1 is waiting, start an admission.
