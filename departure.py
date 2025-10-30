@@ -1,7 +1,7 @@
-from models.event import Event
-from engine.rooms import release, available_count
+from event import Event
+from rooms import release, available_count    # Part-B
 from reporter import log_departure
-from controller import try_start_treatment
+from controller import try_start_treatment    # Part-C
 
 class Departure(Event):
     """
