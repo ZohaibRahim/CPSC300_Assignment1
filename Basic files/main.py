@@ -1,63 +1,71 @@
-from Read_file import read_next_arrival
 from queue import PriorityQueue
 from Patient import Patient
+from Hospital import Hospital
+from ArrivalEvent import ArrivalEvent
 
-event_list = []
-waiting_room = PriorityQueue()
+# Global variables
 patient_id_counter = 28064212
+input_file = None
 
+def load_next_arrival(hospital):
+    """Load the next arrival event from file (only 1 arrival in queue at a time)"""
+    global patient_id_counter, input_file, event_queue
+    
+    if input_file is None:
+        return
+    
+    line = input_file.readline()
+    if not line:
+        # End of file
+        return
+    
+    # Parse arrival data
+    parts = line.strip().split()
+    arrival_time = int(parts)
+    patient_type = parts
+    treatment_time = int(parts)
+    
+    # Create patient and arrival event
+    patient = Patient(patient_id_counter, arrival_time, patient_type, treatment_time)
+    arrival_event = ArrivalEvent(arrival_time, patient)
+    
+    event_queue.put(arrival_event)
+    patient_id_counter += 1
 
-def add_event_in_order(event):
-    index = 0
-    while index < len(event_list) and event_list[index][0] <= event[0]:
-        index += 1
-    event_list.insert(index, event)
+def print_statistics(hospital):
+    """Print final statistics table"""
+    print("\n" + "="*60)
+    print("FINAL STATISTICS")
+    print("="*60)
+    print(f"{'Patient ID':<15} {'Total Wait Time':<20}")
+    print("-"*60)
+    
+    total_wait = 0
+    for patient in hospital.all_patients:
+        wait = patient.total_waiting_time()
+        total_wait += wait
+        print(f"{patient.patient_id:<15} {wait:<20}")
+    
+    print("-"*60)
+    num_patients = len(hospital.all_patients)
+    avg_wait = total_wait / num_patients if num_patients > 0 else 0
+    
+    print(f"\nTotal patients: {num_patients}")
+    print(f"Average waiting time: {avg_wait:.2f} time units")
+    print("="*60)
 
-
-with open('data1.txt', 'r') as file:
-
-    first_event = read_next_arrival(file, patient_id_counter)
-    if first_event:
-        add_event_in_order(first_event)
-        patient_id_counter += 1
-
-    while event_list:
-        current_event = event_list.pop(0)
-        current_time = current_event[0]
-        event_type = current_event[1]
-        patient = current_event[2]
-
-        print(f"\nProcessing {event_type} for Patient ID {patient.patient_id} (Type: {patient.patient_type}) at time {current_time}")
-
-        # Arrival event
-        if event_type == 'arrival':
-            waiting_room.put(patient)
-            if waiting_room.qsize() == 1:
-                departure_time = current_time + patient.treatment_time + 1
-                departure_event = (departure_time, 'departure', patient)
-                add_event_in_order(departure_event)
-
-        # Departure event
-        elif event_type == 'departure':
-            waiting_room.get()
-            if not waiting_room.empty():
-                next_patient = waiting_room.queue[0]
-                next_departure_time = current_time + next_patient.treatment_time + 1
-                next_departure_event = (next_departure_time, 'departure', next_patient)
-                add_event_in_order(next_departure_event)
-
-        # Read next arrival after processing current event
-        next_event = read_next_arrival(file, patient_id_counter)
-        if next_event:
-            add_event_in_order(next_event)
-            patient_id_counter += 1
-
-        # Debug print statements
-        print("Events in queue:")
-        for event in event_list:
-            e_time, e_type, e_patient = event
-            print(f"  Time {e_time} - {e_type} - Patient {e_patient.patient_id} (Type: {e_patient.patient_type})")
-
-        print("Waiting room queue:")
-        for p in waiting_room.queue:
-            print(f"  Patient {p.patient_id} (Priority: {p.priority}, Type: {p.patient_type})")
+def main():
+    global input_file, event_queue
+    
+    # Get input file
+    filename = input("Please enter input file name: ")
+    
+    try:
+        input_file = open(filename, 'r')
+    except FileNotFoundError:
+        print(f"Error: Could not find file '{filename}'")
+        return
+    
+    # Initialize simulation
+    hospital = Hospital()
+   
