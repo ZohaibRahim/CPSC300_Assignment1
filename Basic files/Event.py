@@ -1,20 +1,18 @@
+# Event base class for the hospital simulation
+
 class Event:
-    """Base Event class for the hospital simulation."""
+    # Base class for all events in the simulation
     
     def __init__(self, time, patient=None):
         self.time = time
         self.patient = patient
     
     def __lt__(self, other):
-        """
-        Comparison for PriorityQueue ordering.
-        Primary: sort by time (earlier times first)
-        Secondary: sort by patient_id (lower patient numbers first when times are equal)
-        """
+        # Primary sort: by time (earlier times first)
         if self.time != other.time:
             return self.time < other.time
         
-        # Handle case where one or both events don't have patients
+        # Secondary sort: by patient_id when times are equal (lower patient ID first)
         if self.patient is None and other.patient is None:
             return False
         if self.patient is None:
@@ -26,5 +24,5 @@ class Event:
         return self.patient.patient_id < other.patient.patient_id
     
     def process(self, hospital):
-        """Process the event. Must be implemented by subclasses."""
+        # All subclasses must implement this method
         raise NotImplementedError("Subclasses must implement process()")

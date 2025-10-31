@@ -1,12 +1,15 @@
+# Treatment completed event - when a patient finishes treatment
+
 from Event import Event
 
 class TreatmentCompletedEvent(Event):
-    """Event that occurs when a patient's treatment is completed."""
+    # Handles completion of patient treatment
     
     def process(self, hospital):
         patient = self.patient
         patient.treatment_end_time = self.time
         
+        # Print treatment completion
         print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) finishes treatment")
         
         new_events = []
