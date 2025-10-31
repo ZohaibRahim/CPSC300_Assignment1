@@ -2,6 +2,29 @@ from typing import Optional, List, Any
 import heapq
 
 
+# Scheduler singleton
+_SCHEDULER_SINGLETON = None
+def scheduler_instance():
+    """
+    Return the shared EventScheduler. Creates it on first call.
+    """
+    global _SCHEDULER_SINGLETON
+    if _SCHEDULER_SINGLETON is None:
+        _SCHEDULER_SINGLETON = EventScheduler()
+    return _SCHEDULER_SINGLETON
+
+# Rooms singleton (optional but useful for imports elsewhere)
+_ROOMS_SINGLETON = None
+def rooms_instance():
+    """
+    Return the shared RoomsManager. Creates it on first call.
+    """
+    global _ROOMS_SINGLETON
+    if _ROOMS_SINGLETON is None:
+        _ROOMS_SINGLETON = RoomsManager()
+    return _ROOMS_SINGLETON
+
+
 # EVENT SCHEDULER
 
 class EventScheduler:
@@ -11,20 +34,6 @@ class EventScheduler:
     2. Patient priority (ascending, lower = higher priority)
     3. Patient number (ascending)
     """
-
-    # create singletons
-    _scheduler_singleton = None
-
-    def scheduler_instance():
-        """
-        Returns a shared scheduler object (singleton) for the whole simulation.
-        Creates it on first call.
-        """
-        global _scheduler_singleton
-        if _scheduler_singleton is None:
-            _scheduler_singleton = EventScheduler()
-        return _scheduler_singleton
-
     
     def __init__(self):
         self._heap = []
