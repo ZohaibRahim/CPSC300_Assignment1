@@ -65,7 +65,7 @@ def print_statistics(hospital):
     
     print("\n")
     print(f"Patients seen in total: {num_patients}")
-    print(f"Average waiting time per patient : {avg_wait:.6f}")
+    print(f"Average waiting time per patient : {avg_wait:.3f}")
 
 def main():
     global input_file, event_queue
