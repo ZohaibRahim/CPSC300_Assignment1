@@ -1,9 +1,6 @@
 import heapq
-from dataclasses import dataclass
-from typing import List, Tuple
-
-from events import Event    # Base Event
-from scheduler import schedule    #Part-B
+from events import Event    
+from scheduler import schedule    
 from reporter import log_admission_complete
 from departure import Departure
 
@@ -12,7 +9,7 @@ class _AdmItem:
     # FCFS by treatment-finish time, tie-break by patient id
     treat_finish_time: int
     patient_id: int
-    patient: "Patient"  # forward type
+    patient: "Patient" 
 
 nurse_busy: bool = False    # Single admission nurse shared by all P1 patients
 _adm_heap: list[tuple[int, int, "Patient"]] = []    ## Heap items are tuples: (treat_finish_time, patient_id, patient_obj)

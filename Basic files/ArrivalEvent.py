@@ -1,29 +1,27 @@
-# ArrivalEvent.py
 from Event import Event
 
 class ArrivalEvent(Event):
-    """Patient arrives at hospital"""
     
     def process(self, hospital):
         patient = self.patient
-        hospital.all_patients.append(patient)
         
-        # Print arrival
-        patient_type_str = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
+        # Add to hospital tracking
+        hospital.add_patient(patient)
         
-        if patient.patient_type == 'E':
-            print(f"Time {self.time}: {patient.patient_id} ({patient_type}) Priority 1 arrives")
-        else:
-            print(f"Time {self.time}: {patient.patient_id} ({patient_type}) arrives")
+        # Print arrival with proper formatting
+        patient_type = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
+        print(f"Time {self.time:3d}: {patient.patient_id} ({patient_type}) arrives")
         
-        # Load next arrival from file if not at end
-        from main import load_next_arrival
-        load_next_arrival(hospital)
+        # Load next arrival
+        from Main import load_next_arrival
+        load_next_arrival()
+        
+        new_events = []
         
         if patient.patient_type == 'E':
             # Emergency patients skip assessment, go to waiting room
             from EnterWaitingRoomEvent import EnterWaitingRoomEvent
-            return [EnterWaitingRoomEvent(self.time, patient)]
+            new_events.append(EnterWaitingRoomEvent(self.time, patient))
         else:
             # Walk-in patients join assessment queue
             hospital.assessment_queue.append(patient)
@@ -33,10 +31,11 @@ class ArrivalEvent(Event):
             if hospital.can_start_assessment():
                 from AssessmentEvent import AssessmentEvent
                 hospital.triage_nurse_busy = True
-                patient_being_assessed = hospital.assessment_queue.pop(0)
-                wait_time = self.time - patient_being_assessed.assessment_start_time
-                patient_being_assessed.wait_for_assessment = wait_time
-                print(f"Time {self.time}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
-                return [AssessmentEvent(self.time + 4, patient_being_assessed)]
-            
-            return []
+                patient_being_assessed = hospital.get_next_assessment_patient()
+                if patient_being_assessed:
+                    wait_time = self.time - patient_being_assessed.assessment_start_time
+                    patient_being_assessed.wait_for_assessment = wait_time
+                    print(f"Time {self.time:3d}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
+                    new_events.append(AssessmentEvent(self.time + 4, patient_being_assessed))
+        
+        return new_events

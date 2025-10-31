@@ -1,45 +1,66 @@
 # Hospital.py - Complete Hospital Simulation Manager
 
-
-import random
+from collections import deque
 from queue import PriorityQueue
+import random
 
 class Hospital:
     """Manages the hospital simulation state"""
     
     def __init__(self):
-        # Queues for different stages
-        self.assessment_queue = []  # FIFO queue for walk-ins waiting for triage
-        self.waiting_room = PriorityQueue()  # Priority queue for patients waiting for treatment
-        self.admission_queue = []  # FIFO queue for priority 1 patients waiting for admission nurse
+        # Queue/tracking structures
+        self.all_patients = []  # Track all patients for statistics
+        self.assessment_queue = deque()  # FIFO for walk-in assessment
+        self.waiting_room = PriorityQueue()  # Priority queue for treatment
+        self.admission_queue = deque()  # FIFO for priority 1 admissions
         
         # Resources
-        self.available_treatment_rooms = 3
+        self.rooms_available = 3
         self.triage_nurse_busy = False
         self.admission_nurse_busy = False
         
-        # Tracking
-        self.all_patients = []
-        self.current_time = 0
+        # Random seed for assessment priorities (matches model)
+        random.seed(0)  
+    
+    #Add new patient to hospital tracking
+    def add_patient(self, patient):
         
-        # Set random seed for consistent priority assignment
-        random.seed(42)
+        self.all_patients.append(patient)
     
-    def get_available_rooms_text(self):
-        """Return text showing available rooms"""
-        if self.available_treatment_rooms == 1:
-            return "1 room still available"
-        else:
-            return f"{self.available_treatment_rooms} rooms still available"
-    
-    def can_start_treatment(self):
-        """Check if a patient can start treatment"""
-        return self.available_treatment_rooms > 0 and not self.waiting_room.empty()
-    
+    #Check if triage nurse is available
     def can_start_assessment(self):
-        """Check if triage nurse is available and patients are waiting"""
-        return not self.triage_nurse_busy and len(self.assessment_queue) > 0
+        
+        return not self.triage_nurse_busy
     
-    def can_start_admission(self):
-        """Check if admission nurse is available and patients are waiting"""
-        return not self.admission_nurse_busy and len(self.admission_queue) > 0
+    # Get next patient from assessment queue
+    def get_next_assessment_patient(self):
+        
+        if not self.assessment_queue:
+            return None
+        return self.assessment_queue.popleft()
+    
+    # Add patient to waiting room priority queue
+    def add_to_waiting_room(self, patient):
+       
+        
+        priority_tuple = (patient.priority, patient.patient_id)
+        self.waiting_room.put((priority_tuple, patient))
+    
+    #Get highest priority patient from waiting room
+    def get_next_from_waiting_room(self):
+        
+        if self.waiting_room.empty():
+            return None
+        return self.waiting_room.get()[1]  # Return just the patient
+    
+    #Add priority 1 patient to admission queue
+    def add_to_admission_queue(self, patient):
+        
+        self.admission_queue.append(patient)
+    
+    #Get next patient waiting for admission
+    def get_next_admission_patient(self):
+        
+        if not self.admission_queue:
+            return None
+        return self.admission_queue.popleft()

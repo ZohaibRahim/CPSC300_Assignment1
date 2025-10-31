@@ -1,5 +1,6 @@
 from Patient import Patient
 
+#sample read file we created while building the intial logic, not used in our final code
 
 #reading files 
 def read_next_arrival(file, patient_id):
