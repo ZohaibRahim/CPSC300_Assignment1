@@ -1,30 +1,25 @@
-from Event import Event
+from abc import ABC, abstractmethod
 
-class EnterWaitingRoomEvent(Event):
-    """Patient enters waiting room and waits for treatment"""
+class Event(ABC):
+    """Abstract base class for all events"""
     
+    def __init__(self, time, patient):
+        self.time = time
+        self.patient = patient
+    
+    @abstractmethod
     def process(self, hospital):
-        patient = self.patient
-        priority_text = f"Priority {patient.priority}" if patient.priority else ""
-        print(f"Time {self.time:3d}: {patient.patient_id} ({priority_text}) enters waiting room")
-        
-        # Add to waiting room priority queue
-        hospital.waiting_room.put(patient)
-        patient.waiting_room_enter_time = self.time
-        
-        # Try to start treatment if room available
-        if hospital.can_start_treatment():
-            from StartTreatmentEvent import StartTreatmentEvent
-            next_patient = hospital.waiting_room.get()
-            wait_time = self.time - next_patient.waiting_room_enter_time
-            next_patient.wait_for_treatment = wait_time
-            next_patient.treatment_start_time = self.time
-            
-            hospital.available_treatment_rooms -= 1
-            rooms_text = hospital.get_available_rooms_text()
-            
-            print(f"Time {self.time:3d}: {next_patient.patient_id} (Priority {next_patient.priority}) starts treatment (waited {wait_time}, {rooms_text})")
-            
-            return [StartTreatmentEvent(self.time, next_patient)]
-        
-        return []
+        """Process this event - must be implemented by subclasses"""
+        pass
+    
+    def __lt__(self, other):
+        """
+        Compare events for priority queue ordering.
+        Order by: time first, then patient_id
+        """
+        if self.time != other.time:
+            return self.time < other.time
+        return self.patient.patient_id < other.patient.patient_id
+    
+    def __repr__(self):
+        return f"{self.__class__.__name__}(time={self.time}, patient={self.patient.patient_id})"

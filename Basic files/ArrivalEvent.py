@@ -7,10 +7,8 @@ class ArrivalEvent(Event):
         patient = self.patient
         hospital.all_patients.append(patient)
         
-        # Print arrival - EMERGENCY shows "(Emergency) arrives" format
-        # WALK-IN shows "(Walk-In) arrives" format
+        # Print arrival with proper formatting
         patient_type = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
-        
         print(f"Time {self.time:3d}: {patient.patient_id} ({patient_type}) arrives")
         
         # Load next arrival from file if not at end

@@ -34,7 +34,7 @@ def load_next_arrival(hospital):
     patient_id_counter += 1
 
 def print_statistics(hospital):
-    """Print final statistics table"""
+    """Print final statistics table matching assignment format"""
     print("\n...All events complete.  Final Summary:\n")
     
     # Sort patients by priority, then by patient_id
