@@ -5,15 +5,17 @@ class ArrivalEvent(Event):
     
     def process(self, hospital):
         patient = self.patient
-        hospital.all_patients.append(patient)
+        
+        # Add to hospital tracking
+        hospital.add_patient(patient)
         
         # Print arrival with proper formatting
         patient_type = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
         print(f"Time {self.time:3d}: {patient.patient_id} ({patient_type}) arrives")
         
-        # Load next arrival from file if not at end
+        # Load next arrival from file (no parameter - uses globals)
         from Main import load_next_arrival
-        load_next_arrival(hospital)
+        load_next_arrival()
         
         if patient.patient_type == 'E':
             # Emergency patients skip assessment, go to waiting room
@@ -28,10 +30,11 @@ class ArrivalEvent(Event):
             if hospital.can_start_assessment():
                 from AssessmentEvent import AssessmentEvent
                 hospital.triage_nurse_busy = True
-                patient_being_assessed = hospital.assessment_queue.pop(0)
-                wait_time = self.time - patient_being_assessed.assessment_start_time
-                patient_being_assessed.wait_for_assessment = wait_time
-                print(f"Time {self.time:3d}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
-                return [AssessmentEvent(self.time + 4, patient_being_assessed)]
+                patient_being_assessed = hospital.get_next_assessment_patient()
+                if patient_being_assessed:
+                    wait_time = self.time - patient_being_assessed.assessment_start_time
+                    patient_being_assessed.wait_for_assessment = wait_time
+                    print(f"Time {self.time:3d}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
+                    return [AssessmentEvent(self.time + 4, patient_being_assessed)]
             
             return []

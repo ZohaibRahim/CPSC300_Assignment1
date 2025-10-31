@@ -8,7 +8,7 @@ patient_id_counter = 28064212
 input_file = None
 event_queue = None
 
-def load_next_arrival(hospital):
+def load_next_arrival():
     """Load the next arrival event from file (only 1 arrival in queue at a time)"""
     global patient_id_counter, input_file, event_queue
     
@@ -17,7 +17,6 @@ def load_next_arrival(hospital):
     
     line = input_file.readline()
     if not line:
-        # End of file
         return
     
     # Parse arrival data
@@ -38,7 +37,7 @@ def print_statistics(hospital):
     print("\n...All events complete.  Final Summary:\n")
     
     # Sort patients by priority, then by patient_id
-    sorted_patients = sorted(hospital.all_patients, key=lambda p: (p.priority, p.patient_id))
+    sorted_patients = sorted(hospital.all_patients, key=lambda p: (p.priority or 999, p.patient_id))
     
     # Header
     print(f" {'Patient':<8} {'Priority':<10} {'Arrival':<10} {'Assessment':<12} {'Treatment':<10} {'Departure':<10} {'Waiting':<8}")
@@ -52,7 +51,7 @@ def print_statistics(hospital):
         arrival = patient.arrival_time
         assessment = patient.assessment_end_time if patient.assessment_end_time else patient.arrival_time
         treatment_req = patient.treatment_time
-        departure = patient.departure_time
+        departure = patient.departure_time if patient.departure_time is not None else "N/A"
         waiting = patient.total_waiting_time()
         
         total_wait += waiting
@@ -86,20 +85,21 @@ def main():
     print("\nSimulation begins...\n")
     
     # Load first arrival
-    load_next_arrival(hospital)
+    load_next_arrival()
     
-    # Process all events
+    # Main simulation loop
     while not event_queue.empty():
         event = event_queue.get()
-        hospital.current_time = event.time
-        
-        # Process event and get new events it generates
         new_events = event.process(hospital)
         
-        # Add new events to queue
+        # Schedule any new events generated
         if new_events:
             for new_event in new_events:
                 event_queue.put(new_event)
+        
+        # Load next arrival after processing current event
+        # (maintains single arrival in queue invariant)
+        load_next_arrival()
     
     input_file.close()
     

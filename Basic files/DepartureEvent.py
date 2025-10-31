@@ -1,32 +1,25 @@
 from Event import Event
+from StartTreatmentEvent import StartTreatmentEvent
 
 class DepartureEvent(Event):
-    """Patient leaves the hospital"""
+    """Patient departs from hospital"""
     
     def process(self, hospital):
         patient = self.patient
+        # Free up treatment room
+        hospital.rooms_available += 1
+        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) departs, {hospital.rooms_available} rm(s) remain")
+        
+        # Record departure time for statistics
         patient.departure_time = self.time
         
-        # Free up treatment room
-        hospital.available_treatment_rooms += 1
-        rooms_text = hospital.get_available_rooms_text()
+        # If patients waiting and room now available, start next treatment
+        new_events = []
+        if not hospital.waiting_room.empty() and hospital.rooms_available > 0:
+            next_patient = hospital.get_next_from_waiting_room()
+            if next_patient:
+                hospital.rooms_available -= 1
+                new_events.append(StartTreatmentEvent(self.time, next_patient))
+                print(f"Time {self.time}: {next_patient.patient_id} (Priority {next_patient.priority}) enters treatment room ({hospital.rooms_available} rm(s) remain)")
         
-        # Changed format from "(X rooms still available)" to "X rm(s) remain"
-        print(f"Time {self.time:3d}: {patient.patient_id} (Priority {patient.priority}) departs, {rooms_text}")
-        
-        # Try to start treatment for next waiting patient
-        if hospital.can_start_treatment():
-            from StartTreatmentEvent import StartTreatmentEvent
-            next_patient = hospital.waiting_room.get()
-            wait_time = self.time - next_patient.waiting_room_enter_time
-            next_patient.wait_for_treatment = wait_time
-            next_patient.treatment_start_time = self.time
-            
-            hospital.available_treatment_rooms -= 1
-            rooms_text = hospital.get_available_rooms_text()
-            
-            print(f"Time {self.time:3d}: {next_patient.patient_id} (Priority {next_patient.priority}) starts treatment (waited {wait_time}, {rooms_text})")
-            
-            return [StartTreatmentEvent(self.time, next_patient)]
-        
-        return []
+        return new_events

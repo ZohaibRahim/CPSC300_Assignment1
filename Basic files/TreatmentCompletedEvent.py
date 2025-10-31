@@ -1,30 +1,28 @@
 from Event import Event
+from AdmissionEvent import AdmissionEvent
+from DepartureEvent import DepartureEvent
 
 class TreatmentCompletedEvent(Event):
     """Patient completes treatment"""
     
     def process(self, hospital):
         patient = self.patient
-        patient.treatment_end_time = self.time
+        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) finishes treatment")
         
-        # Changed from "treatment completed" to "finishes treatment"
-        print(f"Time {self.time:3d}: {patient.patient_id} (Priority {patient.priority}) finishes treatment")
+        new_events = []
         
         if patient.priority == 1:
-            # Priority 1 goes to admission queue
-            hospital.admission_queue.append(patient)
+            # Priority 1 patients need admission
+            hospital.add_to_admission_queue(patient)
             
-            # Start admission if nurse available
-            if hospital.can_start_admission():
-                from AdmissionEvent import AdmissionEvent
-                hospital.admission_nurse_busy = True
-                patient_to_admit = hospital.admission_queue.pop(0)
-                wait_time = self.time - patient_to_admit.treatment_end_time
-                patient_to_admit.wait_for_admission = wait_time
-                
-                return [AdmissionEvent(self.time + 3, patient_to_admit)]
-            return []
+            # If admission nurse is free and this is first in queue, start admission
+            if not hospital.admission_nurse_busy:
+                patient_to_admit = hospital.get_next_admission_patient()
+                if patient_to_admit:
+                    hospital.admission_nurse_busy = True
+                    new_events.append(AdmissionEvent(self.time + 3, patient_to_admit))
         else:
-            # Priority 2-5 depart after 1 time unit
-            from DepartureEvent import DepartureEvent
-            return [DepartureEvent(self.time + 1, patient)]
+            # Lower priority patients depart after 1 time unit
+            new_events.append(DepartureEvent(self.time + 1, patient))
+            
+        return new_events
