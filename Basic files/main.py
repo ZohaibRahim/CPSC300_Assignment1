@@ -40,9 +40,9 @@ def print_statistics(hospital):
     sorted_patients = sorted(hospital.all_patients, key=lambda p: (p.priority or 999, p.patient_id))
     
     # Header (exact match to model)
-    print(" Patient Priority   Arrival   Assessment   Treatment   Departure  Waiting")
-    print("  Number             Time     Time         Required      Time      Time")
-    print("-" * 90)
+    print(" Patient   Priority   Arrival   Assessment   Treatment   Departure  Waiting")
+    print("  Number               Time       Time        Required     Time      Time")
+    print("-" * 50)
     
     # Patient data
     total_wait = 0
@@ -57,7 +57,7 @@ def print_statistics(hospital):
         total_wait += waiting
         
         # Format to match model exactly
-        print(f"{patient.patient_id:>8} {priority:>8} {arrival:>8} {assessment:>8} {treatment_req:>8} {departure:>8} {waiting:>8}")
+        print(f"{patient.patient_id:>8} {priority:>8} {arrival:>8} {assessment:>10} {treatment_req:>10} {departure:>10} {waiting:>10}")
     
     # Summary statistics
     num_patients = len(hospital.all_patients)
