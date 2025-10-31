@@ -11,6 +11,20 @@ class EventScheduler:
     2. Patient priority (ascending, lower = higher priority)
     3. Patient number (ascending)
     """
+
+    # create singletons
+    _scheduler_singleton = None
+
+    def scheduler_instance():
+        """
+        Returns a shared scheduler object (singleton) for the whole simulation.
+        Creates it on first call.
+        """
+        global _scheduler_singleton
+        if _scheduler_singleton is None:
+            _scheduler_singleton = EventScheduler()
+        return _scheduler_singleton
+
     
     def __init__(self):
         self._heap = []
