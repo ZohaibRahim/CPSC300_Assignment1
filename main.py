@@ -2,8 +2,7 @@ from arrival_manager import open_input_file, next_arrival_if_due
 from scheduler_queues_rooms import scheduler_instance
 from treatment import TreatmentController, set_controller, on_enter_waiting_room
 from departure import register_backfill_callback
-from reporter import final_report
-from stats import collect_stats  # optional if you accumulate waits
+from stats import final_report
 from patient import all_patients_list  # if you store them globally
 
 controller = TreatmentController(rooms, waiting, scheduler)
