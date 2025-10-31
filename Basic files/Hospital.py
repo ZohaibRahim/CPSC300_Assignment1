@@ -20,7 +20,7 @@ class Hospital:
         self.admission_nurse_busy = False
         
         # Random seed for assessment priorities (matches model)
-        random.seed(0)
+        random.seed(0)  
     
     def add_patient(self, patient):
         """Add new patient to hospital tracking"""
