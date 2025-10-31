@@ -17,7 +17,7 @@ class ArrivalEvent(Event):
             print(f"Time {self.time}: {patient.patient_id} ({patient_type}) arrives")
         
         # Load next arrival from file if not at end
-        from Main import load_next_arrival
+        from main import load_next_arrival
         load_next_arrival(hospital)
         
         if patient.patient_type == 'E':
