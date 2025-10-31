@@ -42,7 +42,7 @@ def print_statistics(hospital):
     # Header (exact match to model)
     print(" Patient   Priority   Arrival   Assessment   Treatment   Departure  Waiting")
     print("  Number               Time       Time        Required     Time      Time")
-    print("-" * 70)
+    print("-" * 80)
     
     # Patient data
     total_wait = 0
