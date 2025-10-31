@@ -13,14 +13,16 @@ class ArrivalEvent(Event):
         patient_type = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
         print(f"Time {self.time:3d}: {patient.patient_id} ({patient_type}) arrives")
         
-        # Load next arrival from file (no parameter - uses globals)
+        # Load next arrival
         from Main import load_next_arrival
         load_next_arrival()
+        
+        new_events = []
         
         if patient.patient_type == 'E':
             # Emergency patients skip assessment, go to waiting room
             from EnterWaitingRoomEvent import EnterWaitingRoomEvent
-            return [EnterWaitingRoomEvent(self.time, patient)]
+            new_events.append(EnterWaitingRoomEvent(self.time, patient))
         else:
             # Walk-in patients join assessment queue
             hospital.assessment_queue.append(patient)
@@ -35,6 +37,6 @@ class ArrivalEvent(Event):
                     wait_time = self.time - patient_being_assessed.assessment_start_time
                     patient_being_assessed.wait_for_assessment = wait_time
                     print(f"Time {self.time:3d}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
-                    return [AssessmentEvent(self.time + 4, patient_being_assessed)]
-            
-            return []
+                    new_events.append(AssessmentEvent(self.time + 4, patient_being_assessed))
+        
+        return new_events

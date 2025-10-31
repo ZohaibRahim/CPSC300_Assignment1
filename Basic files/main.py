@@ -40,23 +40,23 @@ def print_statistics(hospital):
     sorted_patients = sorted(hospital.all_patients, key=lambda p: (p.priority or 999, p.patient_id))
     
     # Header
-    print(f" {'Patient':<8} {'Priority':<10} {'Arrival':<10} {'Assessment':<12} {'Treatment':<10} {'Departure':<10} {'Waiting':<8}")
-    print(f" {'Number':<8} {'':10} {'Time':<10} {'Time':<12} {'Required':<10} {'Time':<10} {'Time':<8}")
-    print("-" * 80)
+    print(" Patient Priority   Arrival Assessment   Treatment   Departure  Waiting")
+    print("  Number               Time       Time    Required        Time     Time")
+    print("-" * 70)
     
     # Patient data
     total_wait = 0
     for patient in sorted_patients:
-        priority = patient.priority if patient.priority else "N/A"
+        priority = patient.priority
         arrival = patient.arrival_time
         assessment = patient.assessment_end_time if patient.assessment_end_time else patient.arrival_time
         treatment_req = patient.treatment_time
-        departure = patient.departure_time if patient.departure_time is not None else "N/A"
+        departure = patient.departure_time
         waiting = patient.total_waiting_time()
         
         total_wait += waiting
         
-        print(f"{patient.patient_id:<8} {priority:<10} {arrival:<10} {assessment:<12} {treatment_req:<10} {departure:<10} {waiting:<8}")
+        print(f"{patient.patient_id:>8} {priority:>8} {arrival:>8} {assessment:>8} {treatment_req:>8} {departure:>8} {waiting:>8}")
     
     # Summary statistics
     num_patients = len(hospital.all_patients)
@@ -98,7 +98,6 @@ def main():
                 event_queue.put(new_event)
         
         # Load next arrival after processing current event
-        # (maintains single arrival in queue invariant)
         load_next_arrival()
     
     input_file.close()

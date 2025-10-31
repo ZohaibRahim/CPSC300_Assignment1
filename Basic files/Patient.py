@@ -16,7 +16,7 @@ class Patient:
         self.assessment_end_time = None
         self.treatment_start_time = None 
         self.treatment_end_time = None
-        self.admission_start_time = None
+        self.admission_queue_entry_time = None
         self.departure_time = None
         
         # Wait times

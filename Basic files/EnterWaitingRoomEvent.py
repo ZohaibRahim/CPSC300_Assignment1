@@ -5,6 +5,11 @@ class EnterWaitingRoomEvent(Event):
     
     def process(self, hospital):
         patient = self.patient
+        
+        # Calculate treatment wait time
+        entered_time = patient.assessment_end_time if patient.assessment_end_time else patient.arrival_time
+        patient.wait_for_treatment = self.time - entered_time
+        
         print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) enters waiting room")
         
         # Add to waiting room

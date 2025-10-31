@@ -19,8 +19,8 @@ class Hospital:
         self.triage_nurse_busy = False
         self.admission_nurse_busy = False
         
-        # Random seed for assessment priorities
-        random.seed(42)
+        # Random seed for assessment priorities (matches model)
+        random.seed(0)
     
     def add_patient(self, patient):
         """Add new patient to hospital tracking"""
@@ -46,7 +46,7 @@ class Hospital:
         """Get highest priority patient from waiting room"""
         if self.waiting_room.empty():
             return None
-        return self.waiting_room.get()[1]  # Return just the patient, not priority tuple
+        return self.waiting_room.get()[1]  # Return just the patient
     
     def add_to_admission_queue(self, patient):
         """Add priority 1 patient to admission queue"""

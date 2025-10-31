@@ -7,11 +7,14 @@ class AdmissionEvent(Event):
         patient = self.patient
         hospital.admission_nurse_busy = False
         
-        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) admitted to Hospital")
+        # Calculate admission wait time
+        patient.wait_for_admission = self.time - patient.admission_queue_entry_time - 3
+        
+        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}, waited {patient.wait_for_admission}) admitted to Hospital")
         
         new_events = []
         
-        # Schedule departure immediately (admission complete)
+        # Schedule departure immediately
         from DepartureEvent import DepartureEvent
         new_events.append(DepartureEvent(self.time, patient))
         

@@ -1,5 +1,4 @@
 from Event import Event
-from StartTreatmentEvent import StartTreatmentEvent
 
 class DepartureEvent(Event):
     """Patient departs from hospital"""
@@ -19,7 +18,7 @@ class DepartureEvent(Event):
             next_patient = hospital.get_next_from_waiting_room()
             if next_patient:
                 hospital.rooms_available -= 1
+                from StartTreatmentEvent import StartTreatmentEvent
                 new_events.append(StartTreatmentEvent(self.time, next_patient))
-                print(f"Time {self.time}: {next_patient.patient_id} (Priority {next_patient.priority}) enters treatment room ({hospital.rooms_available} rm(s) remain)")
         
         return new_events
