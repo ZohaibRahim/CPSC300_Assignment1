@@ -10,16 +10,6 @@ class Event:
     #3. If priorities equal or unknown, earlier patient_id first
     
     def __lt__(self, other):
-<<<<<<< HEAD
-        if self.time != other.time:
-            return self.time < other.time
-        # Priority tie-breaker when time is equal:
-        # Unknown priority (None) should be treated as lowest priority (i.e., sort after known ones)
-        self_pri = self.patient.priority if getattr(self.patient, "priority", None) is not None else float("inf")
-        other_pri = other.patient.priority if getattr(other.patient, "priority", None) is not None else float("inf")
-        if self_pri != other_pri:
-            return self_pri < other_pri
-=======
        
         if self.time != other.time:
             return self.time < other.time
@@ -32,7 +22,6 @@ class Event:
             return self_priority < other_priority
             
         # Break ties by patient ID
->>>>>>> Ahad-Final-Changes
         return self.patient.patient_id < other.patient.patient_id
 
     

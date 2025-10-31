@@ -22,11 +22,7 @@ def load_next_arrival():
     # Parse arrival data
     parts = line.strip().split()
     arrival_time = int(parts[0])
-<<<<<<< HEAD
-    patient_type = parts[1]            # 'E' or 'W'
-=======
     patient_type = parts[1]
->>>>>>> Ahad-Final-Changes
     treatment_time = int(parts[2])
     
     # Create patient and arrival event
