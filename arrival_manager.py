@@ -67,3 +67,32 @@ class ArrivalManager:
         self.pending_arrival_data = self._read_next_line()
         
         return True # Indicate an event was successfully scheduled
+
+#Role D
+_active_managers = {}  # filename -> ArrivalManager
+
+def open_input_file(filename: str):
+    mgr = ArrivalManager(filename)
+    _active_managers[filename] = mgr
+    return mgr  # return as a “handle” for next_arrival_if_due
+
+def next_arrival_if_due(handle, now: int):
+    """
+    Schedule exactly one next Arrival from the file.
+    We ignore 'now' because the scheduler orders by event.time anyway.
+    Return the Arrival event object (already enqueued by handle), or None.
+    """
+    # We’ll mirror your existing API but return the event for convenience.
+    # Slight tweak: produce the event instead of scheduling it internally.
+    # To do that, expose a variant that returns the Arrival instead of scheduling.
+    if handle.pending_arrival_data is None:
+        return None
+
+    arrival_time, p_type, treat_time = handle.pending_arrival_data
+    new_patient = Patient(arrival_time, p_type, treat_time)
+    arrival_event = Arrival(arrival_time, new_patient)
+
+    # move the file forward one line, preserving the “one pending” invariant
+    handle.pending_arrival_data = handle._read_next_line()
+
+    return arrival_event
