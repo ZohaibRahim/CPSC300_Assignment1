@@ -1,9 +1,14 @@
 from arrival_manager import open_input_file, next_arrival_if_due
 from scheduler_queues_rooms import scheduler_instance
-from treatment import on_enter_waiting_room
+from treatment import TreatmentController, set_controller, on_enter_waiting_room
+from departure import register_backfill_callback
 from reporter import final_report
 from stats import collect_stats  # optional if you accumulate waits
 from patient import all_patients_list  # if you store them globally
+
+controller = TreatmentController(rooms, waiting, scheduler)
+set_controller(controller)
+register_backfill_callback(controller.try_start_treatment)
 
 def run_simulation(filename: str):
     fh = open_input_file(filename)
