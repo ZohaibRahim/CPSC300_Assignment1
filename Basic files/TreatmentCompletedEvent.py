@@ -1,7 +1,7 @@
 from Event import Event
 
 class TreatmentCompletedEvent(Event):
-    #Patient completes treatment
+    """Event that occurs when a patient's treatment is completed."""
     
     def process(self, hospital):
         patient = self.patient
@@ -11,22 +11,19 @@ class TreatmentCompletedEvent(Event):
         
         new_events = []
         
+        # Priority 1 patients go to admission queue
         if patient.priority == 1:
-            # Priority 1 patients need admission
-            hospital.add_to_admission_queue(patient)
             patient.admission_queue_entry_time = self.time
+            hospital.admission_queue.append(patient)
             
-            # If admission nurse is free, start admission
+            # If admission nurse is free, start admission immediately
             if not hospital.admission_nurse_busy:
-                # Pop from queue
-                next_patient = hospital.get_next_admission_patient()  
-                if next_patient:
-                    hospital.admission_nurse_busy = True
-                    from AdmissionEvent import AdmissionEvent
-                    new_events.append(AdmissionEvent(self.time + 3, next_patient))
+                hospital.admission_nurse_busy = True
+                from AdmissionEvent import AdmissionEvent
+                new_events.append(AdmissionEvent(self.time + 3, patient))
         else:
-            # Lower priority patients depart immediately
+            # Priority 2-5 patients depart after 1 time unit
             from DepartureEvent import DepartureEvent
             new_events.append(DepartureEvent(self.time + 1, patient))
-            
+        
         return new_events

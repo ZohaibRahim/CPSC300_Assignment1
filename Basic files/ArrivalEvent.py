@@ -1,6 +1,7 @@
 from Event import Event
 
 class ArrivalEvent(Event):
+    """Event that occurs when a patient arrives at the hospital."""
     
     def process(self, hospital):
         patient = self.patient
@@ -8,7 +9,7 @@ class ArrivalEvent(Event):
         # Add to hospital tracking
         hospital.add_patient(patient)
         
-        # Print arrival with proper formatting
+        # Print arrival
         patient_type = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
         print(f"Time {self.time:3d}: {patient.patient_id} ({patient_type}) arrives")
         
@@ -19,7 +20,7 @@ class ArrivalEvent(Event):
         new_events = []
         
         if patient.patient_type == 'E':
-            # Emergency patients skip assessment, go to waiting room
+            # Emergency patients skip assessment, go straight to waiting room
             from EnterWaitingRoomEvent import EnterWaitingRoomEvent
             new_events.append(EnterWaitingRoomEvent(self.time, patient))
         else:
@@ -27,15 +28,14 @@ class ArrivalEvent(Event):
             hospital.assessment_queue.append(patient)
             patient.assessment_start_time = self.time
             
-            # Start assessment if nurse is available
+            # If nurse is available, start assessment immediately
             if hospital.can_start_assessment():
                 from AssessmentEvent import AssessmentEvent
                 hospital.triage_nurse_busy = True
                 patient_being_assessed = hospital.get_next_assessment_patient()
+                
                 if patient_being_assessed:
-                    wait_time = self.time - patient_being_assessed.assessment_start_time
-                    patient_being_assessed.wait_for_assessment = wait_time
-                    print(f"Time {self.time:3d}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
+                    print(f"Time {self.time:3d}: {patient_being_assessed.patient_id} starts assessment (waited 0)")
                     new_events.append(AssessmentEvent(self.time + 4, patient_being_assessed))
         
         return new_events

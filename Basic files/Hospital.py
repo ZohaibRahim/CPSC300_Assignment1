@@ -1,66 +1,44 @@
-# Hospital.py - Complete Hospital Simulation Manager
-
-from collections import deque
 from queue import PriorityQueue
-import random
 
 class Hospital:
-    """Manages the hospital simulation state"""
+    """Hospital class managing resources and patient queues."""
     
     def __init__(self):
-        # Queue/tracking structures
-        self.all_patients = []  # Track all patients for statistics
-        self.assessment_queue = deque()  # FIFO for walk-in assessment
-        self.waiting_room = PriorityQueue()  # Priority queue for treatment
-        self.admission_queue = deque()  # FIFO for priority 1 admissions
-        
-        # Resources
-        self.rooms_available = 3
-        self.triage_nurse_busy = False
-        self.admission_nurse_busy = False
-        
-        # Random seed for assessment priorities (matches model)
-        random.seed(0)  
+        self.all_patients = []
+        self.assessment_queue = []  # FIFO queue for walk-ins waiting to be assessed
+        self.waiting_room = PriorityQueue()  # Priority queue for patients waiting for treatment
+        self.admission_queue = []  # Queue for Priority 1 patients waiting for admission
+        self.rooms_available = 3  # 3 treatment rooms
+        self.triage_nurse_busy = False  # One triage nurse
+        self.admission_nurse_busy = False  # One admission nurse
     
-    #Add new patient to hospital tracking
     def add_patient(self, patient):
-        
+        """Add patient to hospital tracking."""
         self.all_patients.append(patient)
     
-    #Check if triage nurse is available
     def can_start_assessment(self):
-        
-        return not self.triage_nurse_busy
+        """Check if assessment can start (nurse free and patients waiting)."""
+        return len(self.assessment_queue) > 0 and not self.triage_nurse_busy
     
-    # Get next patient from assessment queue
     def get_next_assessment_patient(self):
-        
-        if not self.assessment_queue:
-            return None
-        return self.assessment_queue.popleft()
+        """Get next patient from assessment queue (FIFO)."""
+        if self.assessment_queue:
+            return self.assessment_queue.pop(0)
+        return None
     
-    # Add patient to waiting room priority queue
     def add_to_waiting_room(self, patient):
-       
-        
-        priority_tuple = (patient.priority, patient.patient_id)
-        self.waiting_room.put((priority_tuple, patient))
+        """Add patient to waiting room (priority queue)."""
+        self.waiting_room.put(patient)
     
-    #Get highest priority patient from waiting room
     def get_next_from_waiting_room(self):
-        
-        if self.waiting_room.empty():
+        """Get next patient from waiting room (highest priority first)."""
+        try:
+            return self.waiting_room.get_nowait()
+        except:
             return None
-        return self.waiting_room.get()[1]  # Return just the patient
     
-    #Add priority 1 patient to admission queue
-    def add_to_admission_queue(self, patient):
-        
-        self.admission_queue.append(patient)
-    
-    #Get next patient waiting for admission
     def get_next_admission_patient(self):
-        
-        if not self.admission_queue:
-            return None
-        return self.admission_queue.popleft()
+        """Get next patient from admission queue (FIFO)."""
+        if self.admission_queue:
+            return self.admission_queue.pop(0)
+        return None
