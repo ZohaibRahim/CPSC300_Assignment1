@@ -1,7 +1,6 @@
 from Event import Event
 
 class AdmissionEvent(Event):
-    """Patient completes admission process"""
     
     def process(self, hospital):
         patient = self.patient

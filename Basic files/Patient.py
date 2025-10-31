@@ -1,5 +1,6 @@
+
+#patient class to he
 class Patient:
-    """Represents a patient in the hospital simulation"""
     
     def __init__(self, patient_id, arrival_time, patient_type, treatment_time):
         # Basic info
@@ -25,16 +26,15 @@ class Patient:
         self.wait_for_admission = 0
     
     def total_waiting_time(self):
-        """Calculate total time spent waiting"""
+        #Calculate total time spent waiting
         return (self.wait_for_assessment + 
                 self.wait_for_treatment + 
                 self.wait_for_admission)
     
     def __lt__(self, other):
-        """
-        Compare patients for waiting room priority queue.
-        Order by: priority first (lower is higher priority), then patient_id
-        """
+        #Compare patients for waiting room priority queue.
+        #Order by: priority first (lower is higher priority), then patient_id
+        
         if self.priority != other.priority:
             return self.priority < other.priority
         return self.patient_id < other.patient_id

@@ -1,8 +1,10 @@
 from Event import Event
 
+
 class EnterWaitingRoomEvent(Event):
-    """Patient enters waiting room and waits for treatment"""
     
+    
+    #Patient enters waiting room and waits for treatment
     def process(self, hospital):
         patient = self.patient
         

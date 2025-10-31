@@ -2,7 +2,6 @@ from Event import Event
 import random
 
 class AssessmentEvent(Event):
-    """Patient completes assessment"""
     
     def process(self, hospital):
         patient = self.patient

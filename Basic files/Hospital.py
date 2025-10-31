@@ -22,38 +22,45 @@ class Hospital:
         # Random seed for assessment priorities (matches model)
         random.seed(0)  
     
+    #Add new patient to hospital tracking
     def add_patient(self, patient):
-        """Add new patient to hospital tracking"""
+        
         self.all_patients.append(patient)
     
+    #Check if triage nurse is available
     def can_start_assessment(self):
-        """Check if triage nurse is available"""
+        
         return not self.triage_nurse_busy
     
+    # Get next patient from assessment queue
     def get_next_assessment_patient(self):
-        """Get next patient from assessment queue"""
+        
         if not self.assessment_queue:
             return None
         return self.assessment_queue.popleft()
     
+    # Add patient to waiting room priority queue
     def add_to_waiting_room(self, patient):
-        """Add patient to waiting room priority queue"""
-        # Priority tuple: (priority, patient_id) - lower values sorted first
+       
+        
         priority_tuple = (patient.priority, patient.patient_id)
         self.waiting_room.put((priority_tuple, patient))
     
+    #Get highest priority patient from waiting room
     def get_next_from_waiting_room(self):
-        """Get highest priority patient from waiting room"""
+        
         if self.waiting_room.empty():
             return None
         return self.waiting_room.get()[1]  # Return just the patient
     
+    #Add priority 1 patient to admission queue
     def add_to_admission_queue(self, patient):
-        """Add priority 1 patient to admission queue"""
+        
         self.admission_queue.append(patient)
     
+    #Get next patient waiting for admission
     def get_next_admission_patient(self):
-        """Get next patient waiting for admission"""
+        
         if not self.admission_queue:
             return None
         return self.admission_queue.popleft()

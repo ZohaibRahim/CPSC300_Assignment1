@@ -9,7 +9,7 @@ input_file = None
 event_queue = None
 
 def load_next_arrival():
-    """Load the next arrival event from file (only 1 arrival in queue at a time)"""
+    #Load the next arrival event from file (only 1 arrival in queue at a time)
     global patient_id_counter, input_file, event_queue
     
     if input_file is None:
@@ -33,7 +33,7 @@ def load_next_arrival():
     patient_id_counter += 1
 
 def print_statistics(hospital):
-    """Print final statistics table matching assignment format"""
+    #Print final statistics table matching assignment format
     print("\n...All events complete.  Final Summary:\n")
     
     # Sort patients by priority, then by patient_id
@@ -42,7 +42,7 @@ def print_statistics(hospital):
     # Header (exact match to model)
     print(" Patient Priority   Arrival Assessment   Treatment   Departure  Waiting")
     print("  Number               Time       Time    Required        Time     Time")
-    print("-" * 70)
+    print("-" * 90)
     
     # Patient data
     total_wait = 0

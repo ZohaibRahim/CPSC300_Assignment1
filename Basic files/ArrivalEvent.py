@@ -1,7 +1,6 @@
 from Event import Event
 
 class ArrivalEvent(Event):
-    """Patient arrives at hospital"""
     
     def process(self, hospital):
         patient = self.patient

@@ -18,7 +18,8 @@ class TreatmentCompletedEvent(Event):
             
             # If admission nurse is free, start admission
             if not hospital.admission_nurse_busy:
-                next_patient = hospital.get_next_admission_patient()  # Pop from queue
+                # Pop from queue
+                next_patient = hospital.get_next_admission_patient()  
                 if next_patient:
                     hospital.admission_nurse_busy = True
                     from AdmissionEvent import AdmissionEvent

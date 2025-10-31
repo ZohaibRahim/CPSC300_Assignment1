@@ -1,7 +1,6 @@
 from Event import Event
 
 class DepartureEvent(Event):
-    """Patient departs from hospital"""
     
     def process(self, hospital):
         patient = self.patient
