@@ -1,11 +1,12 @@
-# patient.py
+
+all_patients_list = []     # Global list for all patient objects (used in final reporting)
 
 class Patient:
     """
     Represents a patient moving through the emergency room simulation.
     """
-    # Class variable to ensure IDs start at 28064212 and increment globally
-    NEXT_ID = 28064212
+
+    NEXT_ID = 28064212    # Class variable to ensure IDs start at 28064212 and increment globally
 
     def __init__(self, arrival_time, p_type, treatment_time):
         # Data Read from File
