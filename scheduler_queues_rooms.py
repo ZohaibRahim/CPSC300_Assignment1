@@ -2,6 +2,29 @@ from typing import Optional, List, Any
 import heapq
 
 
+# Scheduler singleton
+_SCHEDULER_SINGLETON = None
+def scheduler_instance():
+    """
+    Return the shared EventScheduler. Creates it on first call.
+    """
+    global _SCHEDULER_SINGLETON
+    if _SCHEDULER_SINGLETON is None:
+        _SCHEDULER_SINGLETON = EventScheduler()
+    return _SCHEDULER_SINGLETON
+
+# Rooms singleton (optional but useful for imports elsewhere)
+_ROOMS_SINGLETON = None
+def rooms_instance():
+    """
+    Return the shared RoomsManager. Creates it on first call.
+    """
+    global _ROOMS_SINGLETON
+    if _ROOMS_SINGLETON is None:
+        _ROOMS_SINGLETON = RoomsManager()
+    return _ROOMS_SINGLETON
+
+
 # EVENT SCHEDULER
 
 class EventScheduler:

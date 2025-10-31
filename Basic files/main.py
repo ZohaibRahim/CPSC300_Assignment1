@@ -21,9 +21,9 @@ def load_next_arrival(hospital):
     
     # Parse arrival data
     parts = line.strip().split()
-    arrival_time = int(parts)
-    patient_type = parts
-    treatment_time = int(parts)
+    arrival_time = int(parts[0])
+    patient_type = parts[1]            # 'E' or 'W'
+    treatment_time = int(parts[2])
     
     # Create patient and arrival event
     patient = Patient(patient_id_counter, arrival_time, patient_type, treatment_time)

@@ -9,7 +9,7 @@ class ArrivalEvent(Event):
         hospital.all_patients.append(patient)
         
         # Print arrival
-        patient_type = 'emergency' if patient.patient_type == 'E' else 'walk-in'
+        patient_type_str = 'Emergency' if patient.patient_type == 'E' else 'Walk-In'
         
         if patient.patient_type == 'E':
             print(f"Time {self.time}: {patient.patient_id} ({patient_type}) Priority 1 arrives")
@@ -17,7 +17,7 @@ class ArrivalEvent(Event):
             print(f"Time {self.time}: {patient.patient_id} ({patient_type}) arrives")
         
         # Load next arrival from file if not at end
-        from Main import load_next_arrival
+        from main import load_next_arrival
         load_next_arrival(hospital)
         
         if patient.patient_type == 'E':
@@ -36,7 +36,7 @@ class ArrivalEvent(Event):
                 patient_being_assessed = hospital.assessment_queue.pop(0)
                 wait_time = self.time - patient_being_assessed.assessment_start_time
                 patient_being_assessed.wait_for_assessment = wait_time
-                print(f"Time {self.time}: {patient_being_assessed.patient_id} begins assessment (waited {wait_time})")
+                print(f"Time {self.time}: {patient_being_assessed.patient_id} starts assessment (waited {wait_time})")
                 return [AssessmentEvent(self.time + 4, patient_being_assessed)]
             
             return []
