@@ -6,6 +6,7 @@ from ArrivalEvent import ArrivalEvent
 # Global variables
 patient_id_counter = 28064212
 input_file = None
+event_queue = None
 
 def load_next_arrival(hospital):
     """Load the next arrival event from file (only 1 arrival in queue at a time)"""
@@ -19,11 +20,11 @@ def load_next_arrival(hospital):
         # End of file
         return
     
-    # Parse arrival data
+    # Parse arrival data - FIXED PARSING
     parts = line.strip().split()
-    arrival_time = int(parts)
-    patient_type = parts
-    treatment_time = int(parts)
+    arrival_time = int(parts[0])
+    patient_type = parts[1]
+    treatment_time = int(parts[2])
     
     # Create patient and arrival event
     patient = Patient(patient_id_counter, arrival_time, patient_type, treatment_time)
@@ -68,4 +69,30 @@ def main():
     
     # Initialize simulation
     hospital = Hospital()
-   
+    event_queue = PriorityQueue()
+    
+    print("\nSimulation begins...\n")
+    
+    # Load first arrival
+    load_next_arrival(hospital)
+    
+    # Process all events
+    while not event_queue.empty():
+        event = event_queue.get()
+        hospital.current_time = event.time
+        
+        # Process event and get new events it generates
+        new_events = event.process(hospital)
+        
+        # Add new events to queue
+        if new_events:
+            for new_event in new_events:
+                event_queue.put(new_event)
+    
+    input_file.close()
+    
+    # Print statistics
+    print_statistics(hospital)
+
+if __name__ == "__main__":
+    main()
