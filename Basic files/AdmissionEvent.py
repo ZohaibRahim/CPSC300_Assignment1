@@ -7,7 +7,8 @@ class AdmissionEvent(Event):
         patient = self.patient
         hospital.admission_nurse_busy = False
         
-        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) admitted to hospital")
+        # Include waiting time in admission message
+        print(f"Time {self.time:3d}: {patient.patient_id} (Priority {patient.priority}, waited {patient.wait_for_admission}) admitted to Hospital")
         
         # Depart at same time
         from DepartureEvent import DepartureEvent

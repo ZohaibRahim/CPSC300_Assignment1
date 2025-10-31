@@ -11,7 +11,8 @@ class DepartureEvent(Event):
         hospital.available_treatment_rooms += 1
         rooms_text = hospital.get_available_rooms_text()
         
-        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) departs ({rooms_text})")
+        # Changed format from "(X rooms still available)" to "X rm(s) remain"
+        print(f"Time {self.time:3d}: {patient.patient_id} (Priority {patient.priority}) departs, {rooms_text}")
         
         # Try to start treatment for next waiting patient
         if hospital.can_start_treatment():
@@ -24,7 +25,7 @@ class DepartureEvent(Event):
             hospital.available_treatment_rooms -= 1
             rooms_text = hospital.get_available_rooms_text()
             
-            print(f"Time {self.time}: {next_patient.patient_id} (Priority {next_patient.priority}) enters treatment room ({rooms_text})")
+            print(f"Time {self.time:3d}: {next_patient.patient_id} (Priority {next_patient.priority}) starts treatment (waited {wait_time}, {rooms_text})")
             
             return [StartTreatmentEvent(self.time, next_patient)]
         

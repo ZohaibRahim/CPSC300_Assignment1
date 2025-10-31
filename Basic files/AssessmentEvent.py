@@ -12,7 +12,7 @@ class AssessmentEvent(Event):
         patient.priority = random.randint(2, 5)
         patient.assessment_end_time = self.time
         
-        print(f"Time {self.time}: {patient.patient_id} assessment completed (Priority {patient.priority})")
+        print(f"Time {self.time:3d}: {patient.patient_id} assessment completed  (Priority now {patient.priority})")
         
         # Patient enters waiting room
         from EnterWaitingRoomEvent import EnterWaitingRoomEvent
@@ -24,7 +24,7 @@ class AssessmentEvent(Event):
             next_patient = hospital.assessment_queue.pop(0)
             wait_time = self.time - next_patient.assessment_start_time
             next_patient.wait_for_assessment = wait_time
-            print(f"Time {self.time}: {next_patient.patient_id} begins assessment (waited {wait_time})")
+            print(f"Time {self.time:3d}: {next_patient.patient_id} starts assessment (waited {wait_time})")
             events.append(AssessmentEvent(self.time + 4, next_patient))
         
         return events

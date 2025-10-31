@@ -7,7 +7,8 @@ class TreatmentCompletedEvent(Event):
         patient = self.patient
         patient.treatment_end_time = self.time
         
-        print(f"Time {self.time}: {patient.patient_id} (Priority {patient.priority}) treatment completed")
+        # Changed from "treatment completed" to "finishes treatment"
+        print(f"Time {self.time:3d}: {patient.patient_id} (Priority {patient.priority}) finishes treatment")
         
         if patient.priority == 1:
             # Priority 1 goes to admission queue

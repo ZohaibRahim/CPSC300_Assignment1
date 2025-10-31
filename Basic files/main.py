@@ -20,7 +20,7 @@ def load_next_arrival(hospital):
         # End of file
         return
     
-    # Parse arrival data - FIXED PARSING
+    # Parse arrival data
     parts = line.strip().split()
     arrival_time = int(parts[0])
     patient_type = parts[1]
@@ -35,25 +35,37 @@ def load_next_arrival(hospital):
 
 def print_statistics(hospital):
     """Print final statistics table"""
-    print("\n" + "="*60)
-    print("FINAL STATISTICS")
-    print("="*60)
-    print(f"{'Patient ID':<15} {'Total Wait Time':<20}")
-    print("-"*60)
+    print("\n...All events complete.  Final Summary:\n")
     
+    # Sort patients by priority, then by patient_id
+    sorted_patients = sorted(hospital.all_patients, key=lambda p: (p.priority, p.patient_id))
+    
+    # Header
+    print(f" {'Patient':<8} {'Priority':<10} {'Arrival':<10} {'Assessment':<12} {'Treatment':<10} {'Departure':<10} {'Waiting':<8}")
+    print(f" {'Number':<8} {'':10} {'Time':<10} {'Time':<12} {'Required':<10} {'Time':<10} {'Time':<8}")
+    print("-" * 80)
+    
+    # Patient data
     total_wait = 0
-    for patient in hospital.all_patients:
-        wait = patient.total_waiting_time()
-        total_wait += wait
-        print(f"{patient.patient_id:<15} {wait:<20}")
+    for patient in sorted_patients:
+        priority = patient.priority if patient.priority else "N/A"
+        arrival = patient.arrival_time
+        assessment = patient.assessment_end_time if patient.assessment_end_time else patient.arrival_time
+        treatment_req = patient.treatment_time
+        departure = patient.departure_time
+        waiting = patient.total_waiting_time()
+        
+        total_wait += waiting
+        
+        print(f"{patient.patient_id:<8} {priority:<10} {arrival:<10} {assessment:<12} {treatment_req:<10} {departure:<10} {waiting:<8}")
     
-    print("-"*60)
+    # Summary statistics
     num_patients = len(hospital.all_patients)
     avg_wait = total_wait / num_patients if num_patients > 0 else 0
     
-    print(f"\nTotal patients: {num_patients}")
-    print(f"Average waiting time: {avg_wait:.2f} time units")
-    print("="*60)
+    print("\n")
+    print(f"Patients seen in total: {num_patients}")
+    print(f"Average waiting time per patient : {avg_wait:.6f}")
 
 def main():
     global input_file, event_queue

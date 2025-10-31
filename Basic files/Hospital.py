@@ -1,6 +1,5 @@
 # Hospital.py - Complete Hospital Simulation Manager
 
-
 import random
 from queue import PriorityQueue
 
@@ -26,11 +25,12 @@ class Hospital:
         random.seed(42)
     
     def get_available_rooms_text(self):
-        """Return text showing available rooms"""
-        if self.available_treatment_rooms == 1:
-            return "1 room still available"
+        """Return text showing available rooms in format 'X rm(s) remain'"""
+        rooms = self.available_treatment_rooms
+        if rooms == 1:
+            return "1 rm(s) remain"
         else:
-            return f"{self.available_treatment_rooms} rooms still available"
+            return f"{rooms} rm(s) remain"
     
     def can_start_treatment(self):
         """Check if a patient can start treatment"""
