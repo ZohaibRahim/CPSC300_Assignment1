@@ -1,7 +1,7 @@
 from Event import Event
 
 class TreatmentCompletedEvent(Event):
-    """Patient completes treatment"""
+    #Patient completes treatment
     
     def process(self, hospital):
         patient = self.patient
