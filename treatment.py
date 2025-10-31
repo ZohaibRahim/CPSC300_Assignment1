@@ -1,12 +1,23 @@
 from events import TreatmentCompleted
 from router import route_after_treatment
 
+_controller_singleton = None
+
+def set_controller(ctrl):
+    """Called once from main to register the TreatmentController instance."""
+    global _controller_singleton
+    _controller_singleton = ctrl
+
+def on_enter_waiting_room(now):
+    """Called by EnterWaitingRoom events to start treatment if room free."""
+    if _controller_singleton is not None:
+        _controller_singleton.try_start_treatment(now)
+
 class TreatmentController:
     def __init__(self, rooms, waitingroom, scheduler, backfill_cb=None):
         self.rooms = rooms
         self.waitingroom = waitingroom
         self.scheduler = scheduler
-        # optional callback for D to call when a room frees (registered later)
         self.backfill_cb = backfill_cb
 
     def try_start_treatment(self, now):
@@ -25,5 +36,4 @@ class TreatmentController:
         now = event.time
         patient = event.patient
         print(f"t={now}: Patient {patient.id} Priority {patient.priority} COMPLETED treatment")
-        # DO NOT release room here; D's Departure will free it.
         route_after_treatment(patient, now)
