@@ -12,16 +12,13 @@ Four-person project: Jayesh Sethi, Ahad Ali Baig, Sara Surani, Zohaib Rahim
 
 - **Role A (Jayesh Sethi):** Event handling and triage logic
   (`events.py`, `triage_logic.py`, `test_triage.py`)
-  *(reconstructed from commit history — please confirm/edit)*
 
 - **Role B (Ahad Ali Baig):** Patient data structures, treatment
   simulation, and overall integration (`patient.py`, `treatment.py`)
-  *(reconstructed from commit history — please confirm/edit)*
 
 - **Role C - Treatment & scheduling support (Sara Surani):** Core scheduling and
   queue logic, treatment test suite, and edge-case testing for waiting
   room priority and room management
-  *(reconstructed from commit history — please confirm/edit)*
 
 - **Role D (Zohaib Rahim):** Patient admission, departure, and routing
   logic (`admission.py`, `departure.py`, `router.py`); event scheduling
@@ -30,11 +27,6 @@ Four-person project: Jayesh Sethi, Ahad Ali Baig, Sara Surani, Zohaib Rahim
   suites for scheduling, reporting, and post-treatment flow
   (`test_scheduler_queues_rooms.py`, `tests_reporter.py`,
   `tests_post_treat.py`, `test_reporter_stats.py`)
-
-> Role assignments above for teammates other than Zohaib are
-> reconstructed from commit history, not confirmed directly — please
-> correct your own section if anything's off before this is treated as
-> final.
 
 ## How to Run
 
